@@ -1,4 +1,5 @@
 "use client";
+import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import ProductImage from "./product-image";
 // กำหนดช่องข้อมูลของแต่ละประเภทไว้ในที่เดียว
@@ -40,15 +41,16 @@ export default function Manager({ resource }) {
 
   // โหลดรายการและหมวดหมู่ที่ใช้ในฟอร์มสินค้า
   const refresh = useCallback(async () => {
-    const res = await fetch(`/api/${resource}?q=${encodeURIComponent(q)}`, {
-      cache: "no-store",
+    const res = await axios.get(`/api/${resource}`, {
+      params: { q },
+      headers: { "Cache-Control": "no-store" },
     });
-    if (!res.ok) throw Error("โหลดข้อมูลไม่สำเร็จ");
-    setRows(await res.json());
+    setRows(res.data);
     if (resource === "products") {
-      const c = await fetch("/api/categories", { cache: "no-store" });
-      if (!c.ok) throw Error("โหลดหมวดหมู่ไม่สำเร็จ");
-      setCategories(await c.json());
+      const c = await axios.get("/api/categories", {
+        headers: { "Cache-Control": "no-store" },
+      });
+      setCategories(c.data);
     }
   }, [resource, q]);
   useEffect(() => {
@@ -73,16 +75,8 @@ export default function Manager({ resource }) {
     return () => window.removeEventListener("shop-change", listener);
   }, [refresh]);
   async function send(url, method, body) {
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw Error(data.error || "ดำเนินการไม่สำเร็จ");
-    }
-    return res.status === 204 ? null : res.json();
+    const res = await axios.request({ url, method, data: body });
+    return res.status === 204 ? null : res.data;
   }
   // ทุกการบันทึกใช้ขั้นตอนแจ้งผลและโหลดข้อมูลใหม่ร่วมกัน
   async function action(fn) {
@@ -94,7 +88,7 @@ export default function Manager({ resource }) {
       setMessage("บันทึกสำเร็จ");
       window.dispatchEvent(new Event("shop-change"));
     } catch (e) {
-      setMessage(e.message || "เชื่อมต่อไม่สำเร็จ");
+      setMessage(e.response?.data?.error || e.message || "เชื่อมต่อไม่สำเร็จ");
     } finally {
       setBusy(false);
     }
@@ -111,13 +105,11 @@ export default function Manager({ resource }) {
     try {
       const data = new FormData();
       data.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: data });
-      const result = await res.json();
-      if (!res.ok) throw Error(result.error);
+      const { data: result } = await axios.post("/api/upload", data);
       setForm((f) => ({ ...f, [key]: result.url }));
       setMessage("อัปโหลดแล้ว อย่าลืมกดบันทึก");
     } catch (e) {
-      setMessage(e.message || "อัปโหลดไม่สำเร็จ");
+      setMessage(e.response?.data?.error || e.message || "อัปโหลดไม่สำเร็จ");
     } finally {
       setBusy(false);
     }

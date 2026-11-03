@@ -1,32 +1,145 @@
 @import "tailwindcss";
-body { font-family: Arial, sans-serif; background: #f3f6fa; color: #172334; margin: 0; }
-main { max-width: 1100px; margin: auto; padding: 24px; }
-a { color: #0759a3; text-decoration: underline; }
-button, input, select, textarea { font: inherit; border: 1px solid #9ba8b8; border-radius: 6px; padding: 8px; }
-button { background: #125da4; color: white; cursor: pointer; }
-button:disabled { opacity: .5; cursor: not-allowed; }
-input, select, textarea { background: white; color: #172334; max-width: 100%; }
-label { display: grid; gap: 4px; }
-.card { background: white; padding: 18px; margin: 16px 0; border-radius: 10px; box-shadow: 0 1px 4px #0002; }
-.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
-.stack { display: grid; gap: 12px; }
-.notice { color: #9b2020; }
-table { border-collapse: collapse; width: 100%; }
-th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: top; }
-.scroll { overflow-x: auto; }
+body {
+  font-family: Arial, sans-serif;
+  background: #f3f6fa;
+  color: #172334;
+  margin: 0;
+}
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 24px;
+}
+a {
+  color: #0759a3;
+  text-decoration: underline;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  border: 1px solid #9ba8b8;
+  border-radius: 6px;
+  padding: 8px;
+}
+button {
+  background: #125da4;
+  color: white;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+input,
+select,
+textarea {
+  background: white;
+  color: #172334;
+  max-width: 100%;
+}
+label {
+  display: grid;
+  gap: 4px;
+}
+.card {
+  background: white;
+  padding: 18px;
+  margin: 16px 0;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px #0002;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+}
+.stack {
+  display: grid;
+  gap: 12px;
+}
+.notice {
+  color: #9b2020;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th,
+td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+.scroll {
+  overflow-x: auto;
+}
 
 /* รูปแบบเฉพาะหน้าร้านค้า เพื่อไม่กระทบหน้าหนังสือและ todo */
-.shop-navigation, .shop-quantity-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
-.shop-navigation { margin: 16px 0; }
-.shop-navigation a { padding: 8px 12px; background: #e5eef8; border-radius: 6px; }
-.shop-page .card { margin: 20px 0; }
-.shop-products { display: grid; gap: 12px; }
-.shop-product { display: flex; flex-wrap: wrap; gap: 16px; padding: 14px; border: 1px solid #d5dee8; border-radius: 8px; }
-.shop-product-details { flex: 1 1 220px; display: grid; gap: 8px; }
-.shop-product-details p { margin: 0; }
-.shop-product-details input { width: 110px; }
-.shop-page button:focus-visible, .shop-page input:focus-visible, .shop-page select:focus-visible, .shop-page a:focus-visible { outline: 3px solid #ef9b20; outline-offset: 2px; }
-@media (max-width: 600px) { .shop-page { padding: 16px; } .shop-page .card { padding: 14px; } }
-.shop-page .manager-form { margin: 16px 0; }
-.shop-page .scroll { margin: 16px 0; }
-.shop-page .scroll input[type="number"] { width: 90px; }
+.shop-navigation,
+.shop-quantity-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.shop-navigation {
+  margin: 16px 0;
+}
+.shop-navigation a {
+  padding: 8px 12px;
+  background: #e5eef8;
+  border-radius: 6px;
+}
+.shop-page .card {
+  margin: 20px 0;
+}
+.shop-products {
+  display: grid;
+  gap: 12px;
+}
+.shop-product {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid #d5dee8;
+  border-radius: 8px;
+}
+.shop-product-details {
+  flex: 1 1 220px;
+  display: grid;
+  gap: 8px;
+}
+.shop-product-details p {
+  margin: 0;
+}
+.shop-product-details input {
+  width: 110px;
+}
+.shop-page button:focus-visible,
+.shop-page input:focus-visible,
+.shop-page select:focus-visible,
+.shop-page a:focus-visible {
+  outline: 3px solid #ef9b20;
+  outline-offset: 2px;
+}
+@media (max-width: 600px) {
+  .shop-page {
+    padding: 16px;
+  }
+  .shop-page .card {
+    padding: 14px;
+  }
+}
+.shop-page .manager-form {
+  margin: 16px 0;
+}
+.shop-page .scroll {
+  margin: 16px 0;
+}
+.shop-page .scroll input[type="number"] {
+  width: 90px;
+}

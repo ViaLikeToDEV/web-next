@@ -1,8 +1,10 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
   const q = new URL(request.url).searchParams.get("q")?.trim() || "";
-  const todos = await prisma.todo.findMany({ where: { title: { contains: q } } });
+  const todos = await prisma.todo.findMany({
+    where: { title: { contains: q } },
+  });
 
   return Response.json(todos, {
     headers: { "Cache-Control": "no-store" },
@@ -23,13 +25,13 @@ async function mutate(request: Request) {
     );
   }
 
-if (request.method === "POST") {
-  const todo = await prisma.todo.create({
-    data: { title },
-  });
+  if (request.method === "POST") {
+    const todo = await prisma.todo.create({
+      data: { title },
+    });
 
-  return Response.json(todo, { status: 201 });
-}
+    return Response.json(todo, { status: 201 });
+  }
 
   if (typeof body.id !== "string" || !body.id) {
     return Response.json({ error: "ไม่พบรายการนี้" }, { status: 404 });

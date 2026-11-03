@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import ProductImage from "./product-image";
 
@@ -19,14 +20,12 @@ export default function Cart() {
 
   const load = useCallback(async () => {
     const [productResponse, orderResponse] = await Promise.all([
-      fetch("/api/products", { cache: "no-store" }),
-      fetch("/api/orders", { cache: "no-store" }),
+      axios.get("/api/products", { headers: { "Cache-Control": "no-store" } }),
+      axios.get("/api/orders", { headers: { "Cache-Control": "no-store" } }),
     ]);
-    if (!productResponse.ok || !orderResponse.ok)
-      throw Error("โหลดร้านค้าไม่สำเร็จ");
-    const latestProducts = await productResponse.json();
+    const latestProducts = productResponse.data;
     setProducts(latestProducts);
-    setOrders(await orderResponse.json());
+    setOrders(orderResponse.data);
     // ปรับตะกร้าเมื่อสต็อกเปลี่ยนหรือลบสินค้าออกจากร้าน
     setCart((previous) =>
       Object.fromEntries(
@@ -40,7 +39,7 @@ export default function Cart() {
 
   useEffect(() => {
     const refresh = () => {
-      void load().catch((error) => setMessage(error.message));
+      void load().catch(() => setMessage("โหลดร้านค้าไม่สำเร็จ"));
     };
     refresh();
     window.addEventListener("shop-change", refresh);
@@ -67,19 +66,15 @@ export default function Cart() {
           productId: Number(productId),
           quantity,
         }));
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
-      });
-      const result = await response.json();
-      if (!response.ok) throw Error(result.error);
+      const { data: result } = await axios.post("/api/orders", { items });
       setCart({});
       setMessage(`สร้างคำสั่งซื้อ #${result.id} แล้ว`);
       await load();
       window.dispatchEvent(new Event("shop-change"));
     } catch (error) {
-      setMessage(error.message || "สั่งซื้อไม่สำเร็จ");
+      setMessage(
+        error.response?.data?.error || error.message || "สั่งซื้อไม่สำเร็จ",
+      );
     } finally {
       setBusy(false);
     }

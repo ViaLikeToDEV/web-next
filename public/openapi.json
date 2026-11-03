@@ -1,18 +1,52 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Todo API",
+    "title": "Project API",
     "version": "1.0.0",
-    "description": "เอกสาร API สำหรับโปรเจกต์ Todo"
+    "description": "เอกสาร API สำหรับรายการงาน หนังสือ หมวดหมู่ สินค้า คำสั่งซื้อ และรูปภาพ"
   },
+  "tags": [
+    {
+      "name": "Todos"
+    },
+    {
+      "name": "Books"
+    },
+    {
+      "name": "Categories"
+    },
+    {
+      "name": "Products"
+    },
+    {
+      "name": "Orders"
+    },
+    {
+      "name": "Uploads"
+    }
+  ],
   "paths": {
     "/api/todos": {
       "get": {
-        "summary": "ดูรายการงานทั้งหมด",
-        "tags": ["Todos"],
+        "tags": [
+          "Todos"
+        ],
+        "summary": "ค้นหารายการงาน",
+        "operationId": "listTodos",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "ค้นหาข้อความบางส่วน โดยตัดช่องว่างหัวท้าย; หากไม่ระบุจะแสดงทั้งหมด",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "รายการงานทั้งหมด",
+            "description": "รายการงาน",
             "content": {
               "application/json": {
                 "schema": {
@@ -27,30 +61,24 @@
         }
       },
       "post": {
+        "tags": [
+          "Todos"
+        ],
         "summary": "เพิ่มรายการงาน",
-        "tags": ["Todos"],
+        "operationId": "createTodo",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": ["title"],
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200,
-                    "example": "ทำการบ้าน"
-                  }
-                }
+                "$ref": "#/components/schemas/TodoInput"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "สร้างรายการสำเร็จ",
+            "description": "สร้างสำเร็จ",
             "content": {
               "application/json": {
                 "schema": {
@@ -60,47 +88,1014 @@
             }
           },
           "400": {
-            "description": "ข้อมูลไม่ถูกต้อง"
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Todos"
+        ],
+        "summary": "แก้ไขชื่องาน",
+        "operationId": "updateTodo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TodoUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "แก้ไขสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Todo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรายการ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Todos"
+        ],
+        "summary": "ลบรายการงาน",
+        "operationId": "deleteTodo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TodoDelete"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "ลบสำเร็จ ไม่มี response body"
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรายการ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/books": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "summary": "ค้นหาหนังสือ",
+        "operationId": "listBooks",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "ค้นหาข้อความบางส่วน โดยตัดช่องว่างหัวท้าย; หากไม่ระบุจะแสดงทั้งหมด",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "รายการเรียงตาม id จากมากไปน้อย",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Book"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
+        "tags": [
+          "Books"
+        ],
         "summary": "เพิ่มหนังสือ",
-        "tags": ["Books"],
         "operationId": "createBook",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": ["title"],
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "example": "พื้นฐาน Web Engineering"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "หนังสือสำหรับฝึกทำเว็บ"
-                  },
-                  "coverUrl": {
-                    "type": "string",
-                    "example": "/uploads/cover.jpg"
-                  }
-                }
+                "$ref": "#/components/schemas/BookInput"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "เพิ่มหนังสือสำเร็จ"
+            "description": "สร้างสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
           },
           "400": {
-            "description": "ข้อมูลไม่ถูกต้อง"
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ข้อมูลซ้ำ ถูกใช้งานอยู่ หรือไม่พบหมวดหมู่",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Books"
+        ],
+        "summary": "แก้ไขหนังสือ",
+        "operationId": "updateBook",
+        "description": "ต้องส่งข้อมูลที่จำเป็นทั้งหมดพร้อม id ใน request body",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "แก้ไขสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรายการ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ข้อมูลซ้ำ ถูกใช้งานอยู่ หรือไม่พบหมวดหมู่",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Books"
+        ],
+        "summary": "ลบหนังสือ",
+        "operationId": "deleteBook",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceDelete"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "ลบสำเร็จ ไม่มี response body"
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรายการ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ข้อมูลซ้ำ ถูกใช้งานอยู่ หรือไม่พบหมวดหมู่",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "ค้นหาหมวดหมู่",
+        "operationId": "listCategories",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "ค้นหาข้อความบางส่วน โดยตัดช่องว่างหัวท้าย; หากไม่ระบุจะแสดงทั้งหมด",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "รายการเรียงตาม id จากมากไปน้อย",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "เพิ่มหมวดหมู่",
+        "operationId": "createCategory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "สร้างสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ข้อมูลซ้ำ ถูกใช้งานอยู่ หรือไม่พบหมวดหมู่",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "แก้ไขหมวดหมู่",
+        "operationId": "updateCategory",
+        "description": "ต้องส่งข้อมูลที่จำเป็นทั้งหมดพร้อม id ใน request body",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "แก้ไขสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรายการ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ข้อมูลซ้ำ ถูกใช้งานอยู่ หรือไม่พบหมวดหมู่",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "ลบหมวดหมู่",
+        "operationId": "deleteCategory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceDelete"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "ลบสำเร็จ ไม่มี response body"
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรายการ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ข้อมูลซ้ำ ถูกใช้งานอยู่ หรือไม่พบหมวดหมู่",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "ค้นหาสินค้า",
+        "operationId": "listProducts",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "ค้นหาข้อความบางส่วน โดยตัดช่องว่างหัวท้าย; หากไม่ระบุจะแสดงทั้งหมด",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "รายการเรียงตาม id จากมากไปน้อย",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductWithCategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "เพิ่มสินค้า",
+        "operationId": "createProduct",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "สร้างสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ข้อมูลซ้ำ ถูกใช้งานอยู่ หรือไม่พบหมวดหมู่",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "แก้ไขสินค้า",
+        "operationId": "updateProduct",
+        "description": "ต้องส่งข้อมูลที่จำเป็นทั้งหมดพร้อม id ใน request body",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "แก้ไขสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรายการ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ข้อมูลซ้ำ ถูกใช้งานอยู่ หรือไม่พบหมวดหมู่",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "ลบสินค้า",
+        "operationId": "deleteProduct",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceDelete"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "ลบสำเร็จ ไม่มี response body"
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรายการ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ข้อมูลซ้ำ ถูกใช้งานอยู่ หรือไม่พบหมวดหมู่",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/bulk": {
+      "patch": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "แก้ไขสต็อกหลายรายการ",
+        "operationId": "updateProductStockBulk",
+        "description": "อัปเดตแบบ transaction ทั้งหมดสำเร็จพร้อมกันหรือไม่บันทึกเลย; id ต้องไม่ซ้ำกัน และแต่ละคำขอมีได้ 1–100 รายการ",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "same"
+                        ]
+                      },
+                      "ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "example": 1
+                        }
+                      },
+                      "stock": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 10
+                      }
+                    },
+                    "required": [
+                      "mode",
+                      "ids",
+                      "stock"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "different"
+                        ]
+                      },
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "$ref": "#/components/schemas/StockUpdate"
+                        }
+                      }
+                    },
+                    "required": [
+                      "mode",
+                      "items"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "แก้ไขสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "updated": {
+                      "type": "integer",
+                      "example": 2
+                    }
+                  },
+                  "required": [
+                    "updated"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรายการ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "ดูรายการคำสั่งซื้อ",
+        "operationId": "listOrders",
+        "responses": {
+          "200": {
+            "description": "รายการเรียงตาม id จากมากไปน้อย",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "สร้างคำสั่งซื้อ",
+        "operationId": "createOrder",
+        "description": "สินค้าในคำสั่งซื้อต้องไม่ซ้ำกัน มีสต็อกเพียงพอ และยอดรวมต้องไม่เกิน 2,147,483,647; การตัดสต็อกและสร้างคำสั่งซื้อทำใน transaction เดียวกัน",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "$ref": "#/components/schemas/OrderItemInput"
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "สร้างคำสั่งซื้อและตัดสต็อกสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "summary": "อัปโหลดรูปภาพ",
+        "operationId": "uploadImage",
+        "description": "รับไฟล์ PNG, JPEG หรือ WebP ที่มีขนาดมากกว่า 0 และไม่เกิน 5 MiB โดยตรวจสอบ signature ของไฟล์",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "อัปโหลดสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "example": "/api/uploads/550e8400-e29b-41d4-a716-446655440000.png"
+                    }
+                  },
+                  "required": [
+                    "url"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้องหรือดำเนินการไม่สำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/uploads/{name}": {
+      "get": {
+        "tags": [
+          "Uploads"
+        ],
+        "summary": "ดูรูปภาพที่อัปโหลด",
+        "operationId": "getUploadedImage",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "ชื่อไฟล์ภาพที่อัปโหลด",
+            "schema": {
+              "type": "string",
+              "example": "550e8400-e29b-41d4-a716-446655440000.png"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "เนื้อหารูปภาพ",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ไม่พบรูปภาพหรือชื่อไฟล์ไม่ถูกต้อง",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "ไม่พบรูปภาพ"
+                }
+              }
+            }
           }
         }
       }
@@ -108,18 +1103,498 @@
   },
   "components": {
     "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "ข้อมูลไม่ถูกต้อง"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
       "Todo": {
         "type": "object",
-        "required": ["id", "title"],
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
           }
-        }
+        },
+        "required": [
+          "id",
+          "title"
+        ]
+      },
+      "TodoInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "TodoUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ]
+      },
+      "TodoDelete": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "BookInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "หากไม่ระบุ เป็นค่าว่าง หรือไม่ใช่สตริง จะบันทึกเป็น null"
+          },
+          "coverUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "หากไม่ระบุ เป็นค่าว่าง หรือไม่ใช่สตริง จะบันทึกเป็น null"
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "CategoryInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ProductInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          },
+          "stock": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          },
+          "categoryId": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "หากไม่ระบุ เป็นค่าว่าง หรือไม่ใช่สตริง จะบันทึกเป็น null"
+          }
+        },
+        "required": [
+          "name",
+          "price",
+          "stock",
+          "categoryId"
+        ]
+      },
+      "OrderItemInput": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          }
+        },
+        "required": [
+          "productId",
+          "quantity"
+        ]
+      },
+      "OrderItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "orderId": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "productId": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          }
+        },
+        "required": [
+          "id",
+          "orderId",
+          "productId",
+          "name",
+          "price",
+          "quantity"
+        ]
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "total",
+          "items"
+        ]
+      },
+      "StockUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "stock": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          }
+        },
+        "required": [
+          "id",
+          "stock"
+        ]
+      },
+      "Book": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "หากไม่ระบุ เป็นค่าว่าง หรือไม่ใช่สตริง จะบันทึกเป็น null"
+          },
+          "coverUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "หากไม่ระบุ เป็นค่าว่าง หรือไม่ใช่สตริง จะบันทึกเป็น null"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "coverUrl"
+        ]
+      },
+      "BookUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "หากไม่ระบุ เป็นค่าว่าง หรือไม่ใช่สตริง จะบันทึกเป็น null"
+          },
+          "coverUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "หากไม่ระบุ เป็นค่าว่าง หรือไม่ใช่สตริง จะบันทึกเป็น null"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ]
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "CategoryUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          },
+          "stock": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          },
+          "categoryId": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "หากไม่ระบุ เป็นค่าว่าง หรือไม่ใช่สตริง จะบันทึกเป็น null"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "price",
+          "stock",
+          "categoryId",
+          "imageUrl"
+        ]
+      },
+      "ProductUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "ตัดช่องว่างหัวท้ายก่อนตรวจสอบ",
+            "example": "ตัวอย่าง"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          },
+          "stock": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          },
+          "categoryId": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "หากไม่ระบุ เป็นค่าว่าง หรือไม่ใช่สตริง จะบันทึกเป็น null"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "price",
+          "stock",
+          "categoryId"
+        ]
+      },
+      "ProductWithCategory": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Product"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "category": {
+                "$ref": "#/components/schemas/Category"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        ]
+      },
+      "ResourceDelete": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          }
+        },
+        "required": [
+          "id"
+        ]
       }
     }
   }
