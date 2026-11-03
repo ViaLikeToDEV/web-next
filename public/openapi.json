@@ -1,0 +1,126 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Todo API",
+    "version": "1.0.0",
+    "description": "เอกสาร API สำหรับโปรเจกต์ Todo"
+  },
+  "paths": {
+    "/api/todos": {
+      "get": {
+        "summary": "ดูรายการงานทั้งหมด",
+        "tags": ["Todos"],
+        "responses": {
+          "200": {
+            "description": "รายการงานทั้งหมด",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Todo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "เพิ่มรายการงาน",
+        "tags": ["Todos"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "example": "ทำการบ้าน"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "สร้างรายการสำเร็จ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Todo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้อง"
+          }
+        }
+      }
+    },
+    "/api/books": {
+      "post": {
+        "summary": "เพิ่มหนังสือ",
+        "tags": ["Books"],
+        "operationId": "createBook",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "พื้นฐาน Web Engineering"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "หนังสือสำหรับฝึกทำเว็บ"
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "/uploads/cover.jpg"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "เพิ่มหนังสือสำเร็จ"
+          },
+          "400": {
+            "description": "ข้อมูลไม่ถูกต้อง"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Todo": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
